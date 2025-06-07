@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Calculadora de CUS y Plan Nutricional</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', sans-serif;
       background: linear-gradient(to bottom, #e6f0ff, #ffffff);
@@ -108,22 +106,12 @@
       display: none;
     }
     @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     @media (max-width: 600px) {
-      h1 {
-        font-size: 24px;
-      }
-      .container {
-        padding: 20px;
-      }
+      h1 { font-size: 24px; }
+      .container { padding: 20px; }
     }
   </style>
 </head>
@@ -180,10 +168,54 @@
     <div id="detallesRegistro" class="detallesRegistro"></div>
   </div>
 
+  <div style="text-align:center;">
+  <button onclick="imprimirDetalles()" style="margin-top: 20px; padding:10px 20px; font-size:16px; background:#2980b9; color:white; border:none; border-radius:8px; cursor:pointer;">
+    🖨️ Imprimir Menú y Rutina
+  </button>
+</div>
+
   <script>
     function calcularCUS(peso, altura, edad, actividad) {
       const TMB = 10 * peso + 6.25 * altura - 5 * edad + 5;
       return TMB * actividad;
+    }
+
+    function generarMenuPersonalizado(nombre, genero, objetivo) {
+      let saludo = `Menú diario para ${nombre} (${genero === "masculino" ? "hombre" : "mujer"}):\n`;
+
+      if (objetivo === "masa") {
+        if (genero === "masculino") {
+          return saludo + `
+- Desayuno: 4 claras de huevo, avena con leche y banana
+- Almuerzo: Arroz con carne roja, palta y ensalada
+- Merienda: Batido de proteínas con frutas secas
+- Cena: Fideos integrales con pollo a la plancha
+          `;
+        } else {
+          return saludo + `
+- Desayuno: Avena con leche y frutas + 2 huevos
+- Almuerzo: Pollo al horno con batata y ensalada
+- Merienda: Yogur con nueces y miel
+- Cena: Arroz con atún y verduras salteadas
+          `;
+        }
+      } else {
+        if (genero === "masculino") {
+          return saludo + `
+- Desayuno: 2 huevos cocidos, fruta y té verde
+- Almuerzo: Pollo a la plancha con arroz integral y verduras
+- Merienda: Yogur natural con avena
+- Cena: Ensalada con atún y huevo
+          `;
+        } else {
+          return saludo + `
+- Desayuno: Infusión + 2 tostadas integrales con palta
+- Almuerzo: Ensalada completa con pollo o atún
+- Merienda: Fruta o yogur descremado
+- Cena: Sopa de verduras con un huevo cocido
+          `;
+        }
+      }
     }
 
     function guardarRegistro() {
@@ -201,9 +233,10 @@
       }
 
       const cus = calcularCUS(peso, altura, edad, actividad).toFixed(2);
+      const menu = generarMenuPersonalizado(nombre, genero, objetivo);
 
       const nuevo = {
-        nombre, genero, peso, altura, edad, actividad, objetivo, cus
+        nombre, genero, peso, altura, edad, actividad, objetivo, cus, menu
       };
 
       let registros = JSON.parse(localStorage.getItem("registros")) || [];
@@ -211,7 +244,123 @@
       localStorage.setItem("registros", JSON.stringify(registros));
 
       mostrarRegistros();
-      mostrarPlan(objetivo, cus);
+      mostrarPlan(objetivo, cus, nombre, genero);
+    }
+
+    function mostrarPlan(objetivo, cus, nombre, genero) {
+      const recomendacion = document.getElementById("recomendacion");
+      const actividades = document.getElementById("actividades");
+
+      if (!nombre) nombre = document.getElementById("nombre").value;
+      if (!genero) genero = document.getElementById("genero").value;
+
+      let saludo = `<h4>Menú diario personalizado para ${nombre} (${genero === "masculino" ? "hombre" : "mujer"}):</h4>`;
+
+      if (objetivo === "masa") {
+        recomendacion.innerHTML = `Hola ${nombre}, para ganar masa muscular te recomendamos un excedente calórico de aproximadamente 500 kcal al día.`;
+
+        if (genero === "masculino") {
+          actividades.innerHTML = `
+            <h4>Actividades recomendadas:</h4>
+            <ul>
+              <li>Rutina de gimnasio con pesas (4-6 veces/semana)</li>
+              <li>Alimentos ricos en proteínas: carne, huevos, leche</li>
+            </ul>
+            ${saludo}
+            <ul>
+              <li><b>Desayuno:</b> 4 claras de huevo, avena con leche y banana</li>
+              <li><b>Almuerzo:</b> Arroz con carne roja, palta y ensalada</li>
+              <li><b>Merienda:</b> Batido de proteínas con frutas secas</li>
+              <li><b>Cena:</b> Fideos integrales con pollo a la plancha</li>
+            </ul>
+<h4>Rutina semanal de entrenamiento (lunes a viernes):</h4>
+<ul>
+  <li><b>Lunes:</b> Pecho y tríceps + 20 min cardio</li>
+  <li><b>Martes:</b> Espalda y bíceps + abdominales</li>
+  <li><b>Miércoles:</b> Piernas completas</li>
+  <li><b>Jueves:</b> Hombros y abdominales</li>
+  <li><b>Viernes:</b> Full body + estiramientos</li>
+</ul>
+
+          `;
+        } else {
+          actividades.innerHTML = `
+            <h4>Actividades recomendadas:</h4>
+            <ul>
+              <li>Entrenamiento con peso corporal o pesas moderadas (3-5 veces/semana)</li>
+              <li>Comer snacks saludables: yogur, semillas, queso</li>
+            </ul>
+            ${saludo}
+            <ul>
+              <li><b>Desayuno:</b> Avena con leche y frutas + 2 huevos</li>
+              <li><b>Almuerzo:</b> Pollo al horno con batata y ensalada</li>
+              <li><b>Merienda:</b> Yogur con nueces y miel</li>
+              <li><b>Cena:</b> Arroz con atún y verduras salteadas</li>
+            </ul>
+<h4>Rutina semanal de entrenamiento (lunes a viernes):</h4>
+<ul>
+  <li><b>Lunes:</b> Tren superior con pesas livianas</li>
+  <li><b>Martes:</b> Piernas y glúteos</li>
+  <li><b>Miércoles:</b> Cardio + abdominales</li>
+  <li><b>Jueves:</b> Full body funcional</li>
+  <li><b>Viernes:</b> Yoga o estiramientos</li>
+</ul>
+
+          `;
+        }
+      } else if (objetivo === "bajar") {
+        recomendacion.innerHTML = `Hola ${nombre}, para bajar de peso te recomendamos un déficit calórico de aproximadamente 500 kcal al día.`;
+
+        if (genero === "masculino") {
+          actividades.innerHTML = `
+            <h4>Actividades recomendadas:</h4>
+            <ul>
+              <li>Caminata o cardio 4 veces por semana</li>
+              <li>Evitar gaseosas, fritos y pan blanco</li>
+            </ul>
+            ${saludo}
+            <ul>
+              <li><b>Desayuno:</b> 2 huevos cocidos, fruta y té verde</li>
+              <li><b>Almuerzo:</b> Pollo a la plancha con arroz integral y verduras</li>
+              <li><b>Merienda:</b> Yogur natural con avena</li>
+              <li><b>Cena:</b> Ensalada con atún y huevo</li>
+            </ul>
+<h4>Rutina semanal de entrenamiento (lunes a viernes):</h4>
+<ul>
+  <li><b>Lunes:</b> Caminata rápida 30 min + abdominales</li>
+  <li><b>Martes:</b> Cardio HIIT (20 min) + tren superior</li>
+  <li><b>Miércoles:</b> Piernas + estiramientos</li>
+  <li><b>Jueves:</b> Bicicleta o natación</li>
+  <li><b>Viernes:</b> Caminata + full body con peso corporal</li>
+</ul>
+
+          `;
+        } else {
+          actividades.innerHTML = `
+            <h4>Actividades recomendadas:</h4>
+            <ul>
+              <li>Zumba, baile o cardio suave (3 veces/semana)</li>
+              <li>Beber 2 litros de agua al día</li>
+            </ul>
+            ${saludo}
+            <ul>
+              <li><b>Desayuno:</b> Infusión + 2 tostadas integrales con palta</li>
+              <li><b>Almuerzo:</b> Ensalada completa con pollo o atún</li>
+              <li><b>Merienda:</b> Fruta o yogur descremado</li>
+              <li><b>Cena:</b> Sopa de verduras con un huevo cocido</li>
+            </ul>
+<h4>Rutina semanal de entrenamiento (lunes a viernes):</h4>
+<ul>
+  <li><b>Lunes:</b> Zumba o baile</li>
+  <li><b>Martes:</b> Caminata + abdominales</li>
+  <li><b>Miércoles:</b> Cardio suave + tren inferior</li>
+  <li><b>Jueves:</b> Rutina funcional en casa</li>
+  <li><b>Viernes:</b> Estiramientos + yoga</li>
+</ul>
+
+          `;
+        }
+      }
     }
 
     function mostrarRegistros() {
@@ -223,7 +372,6 @@
         const div = document.createElement("div");
         div.classList.add("registro");
         div.innerHTML = `
-
           <a href="javascript:void(0);" onclick="mostrarDetalles(${index})">
             <b>${reg.nombre}</b> - CUS: ${reg.cus} kcal
           </a><br>
@@ -233,23 +381,74 @@
       });
     }
 
-    function mostrarDetalles(index) {
-      const registros = JSON.parse(localStorage.getItem("registros")) || [];
-      const reg = registros[index];
-      const detallesDiv = document.getElementById("detallesRegistro");
-      
-      detallesDiv.style.display = "block";
-      detallesDiv.innerHTML = `
-        <h4>Detalles de ${reg.nombre}</h4>
-        <b>Género:</b> ${reg.genero}<br>
-        <b>Peso:</b> ${reg.peso} kg<br>
-        <b>Altura:</b> ${reg.altura} cm<br>
-        <b>Edad:</b> ${reg.edad} años<br>
-        <b>Actividad:</b> ${reg.actividad}<br>
-        <b>Objetivo:</b> ${reg.objetivo}<br>
-        <b>CUS:</b> ${reg.cus} kcal
-      `;
+   function mostrarDetalles(index) {
+  const registros = JSON.parse(localStorage.getItem("registros")) || [];
+  const reg = registros[index];
+  const detallesDiv = document.getElementById("detallesRegistro");
+
+  let rutina = "";
+
+  if (reg.objetivo === "masa") {
+    if (reg.genero === "masculino") {
+      rutina = `
+<h4>Rutina semanal de entrenamiento (lunes a viernes):</h4>
+<ul>
+  <li><b>Lunes:</b> Pecho y tríceps + 20 min cardio</li>
+  <li><b>Martes:</b> Espalda y bíceps + abdominales</li>
+  <li><b>Miércoles:</b> Piernas completas</li>
+  <li><b>Jueves:</b> Hombros y abdominales</li>
+  <li><b>Viernes:</b> Full body + estiramientos</li>
+</ul>`;
+    } else {
+      rutina = `
+<h4>Rutina semanal de entrenamiento (lunes a viernes):</h4>
+<ul>
+  <li><b>Lunes:</b> Tren superior con pesas livianas</li>
+  <li><b>Martes:</b> Piernas y glúteos</li>
+  <li><b>Miércoles:</b> Cardio + abdominales</li>
+  <li><b>Jueves:</b> Full body funcional</li>
+  <li><b>Viernes:</b> Yoga o estiramientos</li>
+</ul>`;
     }
+  } else if (reg.objetivo === "bajar") {
+    if (reg.genero === "masculino") {
+      rutina = `
+<h4>Rutina semanal de entrenamiento (lunes a viernes):</h4>
+<ul>
+  <li><b>Lunes:</b> Caminata rápida 30 min + abdominales</li>
+  <li><b>Martes:</b> Cardio HIIT (20 min) + tren superior</li>
+  <li><b>Miércoles:</b> Piernas + estiramientos</li>
+  <li><b>Jueves:</b> Bicicleta o natación</li>
+  <li><b>Viernes:</b> Caminata + full body con peso corporal</li>
+</ul>`;
+    } else {
+      rutina = `
+<h4>Rutina semanal de entrenamiento (lunes a viernes):</h4>
+<ul>
+  <li><b>Lunes:</b> Zumba o baile</li>
+  <li><b>Martes:</b> Caminata + abdominales</li>
+  <li><b>Miércoles:</b> Cardio suave + tren inferior</li>
+  <li><b>Jueves:</b> Rutina funcional en casa</li>
+  <li><b>Viernes:</b> Estiramientos + yoga</li>
+</ul>`;
+    }
+  }
+
+  detallesDiv.style.display = "block";
+  detallesDiv.innerHTML = `
+    <h4>Detalles de ${reg.nombre}</h4>
+    <b>Género:</b> ${reg.genero}<br>
+    <b>Peso:</b> ${reg.peso} kg<br>
+    <b>Altura:</b> ${reg.altura} cm<br>
+    <b>Edad:</b> ${reg.edad} años<br>
+    <b>Actividad:</b> ${reg.actividad}<br>
+    <b>Objetivo:</b> ${reg.objetivo}<br>
+    <b>CUS:</b> ${reg.cus} kcal<br><br>
+    <pre style="background:#eef; padding:10px; border-left:3px solid #3498db; border-radius:8px;">${reg.menu}</pre>
+    ${rutina}
+  `;
+}
+
 
     function borrarRegistros() {
       if (confirm("¿Estás seguro de borrar todos los registros?")) {
@@ -259,45 +458,52 @@
       }
     }
 
-    function mostrarPlan(objetivo, cus) {
-      const recomendacion = document.getElementById("recomendacion");
-      const actividades = document.getElementById("actividades");
-
-      if (objetivo === "masa") {
-        recomendacion.innerHTML = `Para ganar masa muscular, te recomendamos un excedente calórico de aproximadamente 500 kcal al día.`;
-        actividades.innerHTML = `
-          <h4>Actividades recomendadas:</h4>
-          <ul>
-            <li>Entrenamientos de fuerza: 3-5 veces por semana</li>
-            <li>Consumo adecuado de proteínas (2-2.5g/kg de peso corporal)</li>
-            <li>Alimentos ricos en calorías: aguacate, frutos secos, proteínas magras, arroz</li>
-          </ul>
-        `;
-      } else if (objetivo === "bajar") {
-        recomendacion.innerHTML = `Para perder peso, te recomendamos un déficit calórico de alrededor de 500 kcal al día.`;
-        actividades.innerHTML = `
-          <h4>Actividades recomendadas:</h4>
-          <ul>
-            <li>Entrenamiento cardiovascular: 3-4 veces por semana</li>
-            <li>Comer más verduras, frutas y proteínas magras</li>
-            <li>Controlar el tamaño de las porciones y evitar los azúcares añadidos</li>
-          </ul>
-        `;
-      }
-    }
-
     window.onload = mostrarRegistros;
-  </script>
+  
+function imprimirDetalles() {
+  const detallesDiv = document.getElementById("detallesRegistro");
+  if (!detallesDiv || detallesDiv.innerHTML.trim() === "") {
+    alert("Primero selecciona un registro para ver el menú.");
+    return;
+  }
 
-<div style="text-align: center; margin-top: 40px;">
-  <a href="inicio.html" style="
-    display: inline-block;
-    padding: 12px 24px;
-    background-color: #27ae60;
-    color: white;
-    font-size: 18px;
-    border-radius: 10px;
-    text-decoration: none;">Mas información</a>
-</div>
+  const ventana = window.open("", "_blank");
+  ventana.document.write(`
+    <html>
+      <head>
+        <title>Menú y Rutina</title>
+        <style>
+          body {
+            font-family: 'Segoe UI', sans-serif;
+            padding: 20px;
+            color: #2c3e50;
+          }
+          pre {
+            background: #eef;
+            padding: 10px;
+            border-left: 3px solid #3498db;
+            border-radius: 8px;
+            white-space: pre-wrap;
+          }
+        </style>
+      </head>
+      <body>
+        ${detallesDiv.innerHTML}
+      </body>
+    </html>
+  `);
+  ventana.document.close();
+  ventana.focus();
+  ventana.print();
+}
+
+</script>
+
+  
+
+  <div style="text-align: center; margin-top: 40px;">
+    <a href="inicio.html" style="padding: 12px 24px; background-color: #27ae60; color: white; font-size: 18px; border-radius: 10px; text-decoration: none;"> Mas Info</a>
+  </div>
+
 </body>
 </html>
