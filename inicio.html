@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -38,10 +39,11 @@
       border-radius: 15px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       overflow: hidden;
-      transition: transform 0.3s;
+      /* transition: transform 0.3s; -> Esto se elimina para evitar blur */
+      will-change: auto;
     }
     .card:hover {
-      transform: scale(1.03);
+      transform: none; /* se desactiva animación para evitar desenfoque */
     }
     .card img {
       width: 100%;
@@ -62,6 +64,10 @@
       color: inherit;
       text-decoration: none;
       display: block;
+    }
+    .card iframe {
+      transform: none !important;
+      filter: none !important;
     }
   </style>
 </head>
@@ -137,29 +143,35 @@
 </section>
 
 <div style="text-align: center; margin-top: 40px;">
-  <a href="index.html" style="padding: 14px 28px; background-color: #3498db; color: white; font-size: 18px; border-radius: 10px; text-decoration: none; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: background-color 0.3s;">
+  <a href="cus.html" style="padding: 14px 28px; background-color: #3498db; color: white; font-size: 18px; border-radius: 10px; text-decoration: none; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: background-color 0.3s;">
     🔙 Volver a la Calculadora de CUS
   </a>
 </div>
-
-<section>
-  <div class="card">
-    <div class="card-content">
-      <h3>📝 Cuestionario sobre Nutrición en Educación Física</h3>
-<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSe2B9uLIr94F_xEHamssQASx4DMRl-5y_R97498Z-I3DPeYdg/viewform?embedded=true" width="640" height="1481" frameborder="0" marginheight="0" marginwidth="0">Cargando…</iframe>
- </div>
+<!-- FORMULARIO CENTRADO SIN DESENFOQUE -->
+<div style="display: flex; justify-content: center; padding: 40px;">
+  <div style="max-width: 800px; width: 100%;">
+    <div class="card">
+      <div class="card-content">
+        <h3 style="text-align: center;">📝 Cuestionario sobre Nutrición en Educación Física</h3>
+        <iframe 
+          src="https://docs.google.com/forms/d/e/1FAIpQLSe2B9uLIr94F_xEHamssQASx4DMRl-5y_R97498Z-I3DPeYdg/viewform?embedded=true"
+          style="border: none; width: 100%; height: 1500px;">
+          Cargando…
+        </iframe>
+      </div>
+    </div>
   </div>
-</section>
-  
+</div>
 <footer>
   <p>© 2025 Neurociencia y Nutrición en la Educación Física - Todos los derechos reservados</p>
 </footer>
 
-<!-- Música de fondo -->
 <audio autoplay loop>
   <source src="KALEB DI MASI - TWERKEO RKT FT FACUU DJ x CRONIKO.mp3" type="audio/mpeg">
   Tu navegador no soporta audio HTML5.
 </audio>
+
+
 
 </body>
 </html>
