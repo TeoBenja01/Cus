@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Neurociencia y Nutrición en la Educación Física</title>
   <style>
-    body {
+  body {
       margin: 0;
       font-family: Arial, sans-serif;
       background: linear-gradient(to bottom right, #e0f7fa, #fff);
@@ -16,6 +16,28 @@
       color: white;
       padding: 20px;
       text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    header img {
+      height: 100px;
+      width: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid white;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    header p {
+      width: 100%;
+      margin: 5px 0 0 0;
+      font-size: 1rem;
+      font-weight: 400;
     }
     nav {
       background-color: #004d40;
@@ -39,11 +61,10 @@
       border-radius: 15px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       overflow: hidden;
-      /* transition: transform 0.3s; -> Esto se elimina para evitar blur */
       will-change: auto;
     }
     .card:hover {
-      transform: none; /* se desactiva animación para evitar desenfoque */
+      transform: none;
     }
     .card img {
       width: 100%;
